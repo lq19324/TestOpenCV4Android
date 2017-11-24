@@ -75,7 +75,7 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_grayImage(
 
     LOG("Java_com_example_lq_testopencv_OpenCVHelper_grayImage retVal=%d", retVal);
     LOG("Java_com_example_lq_testopencv_OpenCVHelper_grayImage tGray type=%d tRgb type=%d", tGray.type(), tRgb.type());
-    LOG("CV_8UC1=%d CV_8UC4=%d",CV_8UC1, CV_8UC4);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_grayImage CV_8UC1=%d CV_8UC4=%d",CV_8UC1, CV_8UC4);
 
     AndroidBitmap_unlockPixels(env, srcBitmap);
     AndroidBitmap_unlockPixels(env, dstBitmap);
