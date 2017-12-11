@@ -11,5 +11,5 @@ public class OpenCVHelper {
         System.loadLibrary("test_OpenCV");
     }
 
-    public static native int grayImage(Bitmap bitmap, Bitmap dstBmp);
+    public static native int nativeProcessImage(Bitmap bitmap, Bitmap dstBmp, int type);
 }
