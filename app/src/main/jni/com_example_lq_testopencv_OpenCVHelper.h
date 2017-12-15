@@ -12,8 +12,8 @@ extern "C" {
  * Method:    grayImage
  * Signature: ()V
  */
-JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_grayImage
-  (JNIEnv *, jclass, jobject, jobject);
+JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage
+  (JNIEnv *, jclass, jobject, jobject, jint);
 
 #ifdef __cplusplus
 }

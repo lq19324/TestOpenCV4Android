@@ -12,12 +12,18 @@
 
 using namespace cv;
 
-int toGray(Mat& img, Mat& gray);
+int nativeGray(Mat& img, Mat& gray);
+
+int nativeMediumBlur(Mat& img, Mat& gray, int size);
+
+int nativeBlur(Mat& img, Mat& gray, Size_<int>& size);
+
+int nativeGaussianBlur(Mat& img, Mat& gray, Size_<int>& size);
 
 
 extern "C"
-JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_grayImage(
-        JNIEnv *env, jclass obj, jobject srcBitmap, jobject dstBitmap) {
+JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage(
+        JNIEnv *env, jclass obj, jobject srcBitmap, jobject dstBitmap, jint jtype) {
 
     AndroidBitmapInfo srcBitmapInfo;
     int result = AndroidBitmap_getInfo(env, srcBitmap, &srcBitmapInfo);
@@ -40,10 +46,9 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_grayImage(
         return 0;
     }
 
-
     int width = srcBitmapInfo.width;
     int height = srcBitmapInfo.height;
-    LOG("Java_com_example_lq_testopencv_OpenCVHelper_grayImage bitmap size=%dx%d", width, height);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage bitmap size=%dx%d", width, height);
 
     void* srcRgba = 0;
     //unsigned char* srcRgba = 0;
@@ -57,25 +62,33 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_grayImage(
 
     Mat dstMat(height, width, CV_8UC4, dstRgba);
 
-    Mat& tRgb = srcMat;
-    Mat& tGray = dstMat;
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage dstRgba=%d", dstRgba);
 
-    int conv;
-    jint retVal;
+    Mat& rSrcMat = srcMat;
+    Mat& rDstMat = dstMat;
 
-    conv = toGray(tRgb, tGray);
-    retVal = (jint)conv;
+    int retVal = 0;
 
-    Mat tmp(height, width, CV_8UC4, dstRgba);
-    if(tGray.type() == CV_8UC1)
-    {
-        LOG("nMatToBitmap: CV_8UC1 -> RGBA_8888");
-        cvtColor(tGray, tmp, COLOR_GRAY2RGBA);
+    int type = jtype;
+    type = type >> 8;
+    int type2 = jtype;
+    int level = type2 & 0xFF;
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage filter type=%d level=%d", type, level);
+    if (type == 1) {// gray
+        retVal = nativeGray(rSrcMat, rDstMat);
+    } else if (type == 2) {// medium blur
+        retVal = nativeMediumBlur(rSrcMat, rDstMat, level);
+    } else if (type == 3) {// blur
+        Size_<int> size(level, level);
+        retVal = nativeBlur(rSrcMat, rDstMat, size);
+    } else if (type == 4) {
+        Size_<int> size(level, level);
+        retVal = nativeGaussianBlur(rSrcMat, rDstMat, size);
     }
 
-    LOG("Java_com_example_lq_testopencv_OpenCVHelper_grayImage retVal=%d", retVal);
-    LOG("Java_com_example_lq_testopencv_OpenCVHelper_grayImage tGray type=%d tRgb type=%d", tGray.type(), tRgb.type());
-    LOG("Java_com_example_lq_testopencv_OpenCVHelper_grayImage CV_8UC1=%d CV_8UC4=%d",CV_8UC1, CV_8UC4);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage retVal=%d", retVal);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage rDstMat type=%d rSrcMat type=%d", rDstMat.type(), rSrcMat.type());
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage CV_8UC1=%d CV_8UC4=%d",CV_8UC1, CV_8UC4);
 
     AndroidBitmap_unlockPixels(env, srcBitmap);
     AndroidBitmap_unlockPixels(env, dstBitmap);
@@ -84,13 +97,37 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_grayImage(
 }
 
 
-int toGray(Mat& img, Mat& gray)
-{
-    cvtColor(img, gray, CV_RGBA2GRAY); // Assuming RGBA input
+int nativeGray(Mat& rSrcMat, Mat& rDstMat) {
+    cvtColor(rSrcMat, rDstMat, CV_RGBA2GRAY); // Assuming RGBA input
+    LOG("nativeGray() dstRgba=%d", rDstMat.data);
+    if(rDstMat.type() == CV_8UC1) {
+        Mat tmp(rDstMat.size(), rSrcMat.type(), rDstMat.data);
+        LOG("nativeGray() CV_8UC1 -> RGBA_8888");
+        cvtColor(rDstMat, tmp, COLOR_GRAY2RGBA);
+    }
+    LOG("nativeGray() rDstMat type=%d", rDstMat.type());
 
-    if (gray.rows == img.rows && gray.cols == img.cols)
-    {
+    if (rDstMat.rows == rSrcMat.rows && rDstMat.cols == rSrcMat.cols) {
         return (1);
     }
     return(0);
 }
+
+int nativeMediumBlur(Mat& rSrcMat, Mat& rDstMat, int ksize) {
+    medianBlur(rSrcMat, rDstMat, ksize);
+    LOG("nativeMediumBlur() rDstMat type=%d", rDstMat.type());
+    return (1);
+}
+
+int nativeBlur(Mat& rSrcMat, Mat& rDstMat, Size_<int>& ksize) {
+    blur(rSrcMat, rDstMat, ksize);
+    LOG("nativeBlur() rDstMat type=%d", rDstMat.type());
+    return 1;
+}
+
+int nativeGaussianBlur(Mat& rSrcMat, Mat& rDstMat, Size_<int>& ksize) {
+    GaussianBlur(rSrcMat, rDstMat, ksize, 3);
+    LOG("nativeGaussianBlur() rDstMat type=%d", rDstMat.type());
+    return 1;
+}
+
