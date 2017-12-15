@@ -37,14 +37,9 @@ public class MainActivity extends Activity {
     }
 
     private void startActivity(ActivityInfo info) {
-//        try {
-            Intent intent = new Intent();
-//            intent.setClass(MainActivity.this, Class.forName(info.name));
-            intent.setClassName(info.packageName, info.name);
-            startActivity(intent);
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        Intent intent = new Intent();
+        intent.setClassName(info.packageName, info.name);
+        startActivity(intent);
     }
 
     private List<ActivityInfo> getMyDeclaredActivities(Context context) {

@@ -20,6 +20,69 @@ int nativeBlur(Mat& img, Mat& gray, Size_<int>& size);
 
 int nativeGaussianBlur(Mat& img, Mat& gray, Size_<int>& size);
 
+extern "C"
+JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeFindContours(
+        JNIEnv *env, jclass obj, jobject srcBitmap, jint mode, jint method, jobject contours) {
+
+    AndroidBitmapInfo srcBitmapInfo;
+    int result = AndroidBitmap_getInfo(env, srcBitmap, &srcBitmapInfo);
+    if (ANDROID_BITMAP_RESULT_SUCCESS != result) {
+        return 0;
+    }
+    if (srcBitmapInfo.width <= 0 || srcBitmapInfo.height <= 0 || ANDROID_BITMAP_FORMAT_RGBA_8888 != srcBitmapInfo.format) {
+        return 0;
+    }
+
+    int width = srcBitmapInfo.width;
+    int height = srcBitmapInfo.height;
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeFindContours bitmap size=%dx%d", width, height);
+
+    void* srcRgba = 0;
+    AndroidBitmap_lockPixels(env, srcBitmap, &srcRgba);
+
+    Mat srcMat(height, width, CV_8UC4, srcRgba);
+
+    int retVal = 0;
+    Mat gray;
+    cvtColor(srcMat, gray, CV_RGBA2GRAY);
+    threshold(gray, gray, 120, 255, THRESH_BINARY);
+
+    vector<vector<Point> > cvContours;
+    vector<Vec4i> hierarchy;
+    findContours(gray, cvContours, hierarchy, mode, method);
+
+    //class ArrayList
+    jclass cls_ArrayList = env->FindClass("java/util/ArrayList");
+    //construct method in class ArrayList
+    jmethodID construct_ArrayList = env->GetMethodID(cls_ArrayList,"<init>","()V");
+    //add method in class ArrayList
+    jmethodID arrayList_add = env->GetMethodID(cls_ArrayList,"add","(Ljava/lang/Object;)Z");
+
+    // class Point
+    jclass cls_Point = env->FindClass("android/graphics/Point");
+    //construct method in class Point
+    jmethodID construct_Point = env->GetMethodID(cls_Point,"<init>","(II)V");
+
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeFindContours cvContours size=%d", cvContours.size());
+    for (int i = 0; i < cvContours.size(); ++i) {
+        jobject obj_ArrayList = env->NewObject(cls_ArrayList, construct_ArrayList,"");
+        int size = cvContours[i].size();
+        LOG("%d contour, point size=%d", i, size);
+        for (int j = 0; j < size; ++j) {
+            jobject obj_Point = env->NewObject(cls_Point, construct_Point, cvContours[i][j].x, cvContours[i][j].y);
+            env->CallBooleanMethod(obj_ArrayList, arrayList_add, obj_Point);
+            // Warning: 这里如果不手动释放局部引用，很有可能造成局部引用表溢出(JNI ERROR (app bug): local reference table overflow (max=512))
+            env->DeleteLocalRef(obj_Point);
+        }
+        env->CallBooleanMethod(contours, arrayList_add, obj_ArrayList);
+        env->DeleteLocalRef(obj_ArrayList);
+    }
+
+    AndroidBitmap_unlockPixels(env, srcBitmap);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeFindContours end");
+    return retVal;
+}
+
 
 extern "C"
 JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage(
@@ -81,9 +144,11 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeProcess
     } else if (type == 3) {// blur
         Size_<int> size(level, level);
         retVal = nativeBlur(rSrcMat, rDstMat, size);
-    } else if (type == 4) {
+    } else if (type == 4) {// gaussian blur
         Size_<int> size(level, level);
         retVal = nativeGaussianBlur(rSrcMat, rDstMat, size);
+    } else if (type == 5) {// find contours
+
     }
 
     LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage retVal=%d", retVal);

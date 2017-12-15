@@ -15,6 +15,9 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage
   (JNIEnv *, jclass, jobject, jobject, jint);
 
+JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeFindContours
+        (JNIEnv *, jclass, jobject, jint, jint, jobject);
+
 #ifdef __cplusplus
 }
 #endif
