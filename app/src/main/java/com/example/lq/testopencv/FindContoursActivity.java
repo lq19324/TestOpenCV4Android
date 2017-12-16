@@ -43,7 +43,7 @@ public class FindContoursActivity extends Activity {
 
         AssetManager am = getAssets();
         try {
-            mSrcBitmap = BitmapFactory.decodeStream(am.open("test_find_contours.jpg"));
+            mSrcBitmap = BitmapFactory.decodeStream(am.open("test_find_contours1.jpg"));
             mDstBitmap = Bitmap.createBitmap(mSrcBitmap.getWidth(), mSrcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,7 +81,7 @@ public class FindContoursActivity extends Activity {
         Canvas canvas = new Canvas(mDstBitmap);
         canvas.drawBitmap(mSrcBitmap, 0, 0, null);
 
-        int[] colors = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.LTGRAY};
+        int[] colors = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA};
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
