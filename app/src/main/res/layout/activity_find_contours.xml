@@ -9,14 +9,14 @@
         android:id="@+id/but_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="mode=2"
+        android:text="mode=CV_RETR_CCOMP"
         android:onClick="onButtonClick"/>
 
     <Button
         android:id="@+id/but_method"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="method=1"
+        android:text="method=CV_CHAIN_APPROX_NONE"
         android:onClick="onButtonClick"/>
 
     <Button
@@ -35,17 +35,21 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
         <ImageView
             android:id="@+id/src_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerInside"
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/dst_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerInside"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

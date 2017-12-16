@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 /**
  * Created by lq on 17-11-30.
  */
@@ -56,17 +57,17 @@ public class FindContoursActivity extends Activity {
     public void onButtonClick(View view) {
         int viewID = view.getId();
         if (viewID == R.id.but_mode) {
+            mode++;
             mode%=5;
             if (view instanceof Button) {
-                ((Button)view).setText("mode="+mode);
+                ((Button)view).setText("mode="+modeString(mode));
             }
-            mode++;
         } else if (viewID == R.id.but_method) {
+            method++;
             method%=6;
             if (view instanceof Button) {
-                ((Button)view).setText("method="+method);
+                ((Button)view).setText("method="+methodString(method));
             }
-            method++;
         } else if (viewID == R.id.but_apply) {
             processImage();
         }
@@ -103,5 +104,39 @@ public class FindContoursActivity extends Activity {
         }
         mTimeView.setText("cost time:" + time + " ms contour size:" + size);
         mDstImageView.setImageBitmap(mDstBitmap);
+    }
+
+    private static String modeString(int mode) {
+        switch (mode){
+            case OpenCVHelper.CV_RETR_EXTERNAL:
+                return "CV_RETR_EXTERNAL";
+            case OpenCVHelper.CV_RETR_LIST:
+                return "CV_RETR_LIST";
+            case OpenCVHelper.CV_RETR_CCOMP:
+                return "CV_RETR_CCOMP";
+            case OpenCVHelper.CV_RETR_TREE:
+                return "CV_RETR_TREE";
+            case OpenCVHelper.CV_RETR_FLOODFILL:
+                return "CV_RETR_FLOODFILL";
+        }
+        return "";
+    }
+
+    private static String methodString(int method) {
+        switch (method){
+            case OpenCVHelper.CV_CHAIN_CODE:
+                return "CV_CHAIN_CODE";
+            case OpenCVHelper.CV_CHAIN_APPROX_NONE:
+                return "CV_CHAIN_APPROX_NONE";
+            case OpenCVHelper.CV_CHAIN_APPROX_SIMPLE:
+                return "CV_CHAIN_APPROX_SIMPLE";
+            case OpenCVHelper.CV_CHAIN_APPROX_TC89_L1:
+                return "CV_CHAIN_APPROX_TC89_L1";
+            case OpenCVHelper.CV_CHAIN_APPROX_TC89_KCOS:
+                return "CV_CHAIN_APPROX_TC89_KCOS";
+            case OpenCVHelper.CV_LINK_RUNS:
+                return "CV_LINK_RUNS";
+        }
+        return "";
     }
 }

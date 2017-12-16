@@ -26,6 +26,13 @@
         android:text="gaussian blur"
         android:onClick="onButtonClick"/>
 
+    <Button
+        android:id="@+id/but_bilateral_blur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="gaussian blur"
+        android:onClick="onButtonClick"/>
+
     <SeekBar
         android:id="@+id/seek_blur_level"
         android:layout_width="match_parent"
