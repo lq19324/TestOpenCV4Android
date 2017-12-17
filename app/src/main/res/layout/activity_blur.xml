@@ -30,7 +30,7 @@
         android:id="@+id/but_bilateral_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="gaussian blur"
+        android:text="bilateral blur"
         android:onClick="onButtonClick"/>
 
     <SeekBar

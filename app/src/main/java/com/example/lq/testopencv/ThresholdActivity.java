@@ -45,7 +45,7 @@ public class ThresholdActivity extends Activity {
 
         AssetManager am = getAssets();
         try {
-            mSrcBitmap = BitmapFactory.decodeStream(am.open("test_find_contours1.jpg"));
+            mSrcBitmap = BitmapFactory.decodeStream(am.open("threshold1.jpg"));
             mDstBitmap = Bitmap.createBitmap(mSrcBitmap.getWidth(), mSrcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         } catch (IOException e) {
             e.printStackTrace();
