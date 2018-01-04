@@ -41,6 +41,24 @@
  /home/zzh/android_ndk/android-ndk-r12b/android-ndk-r12b/sources/cxx-stl/gnu-libstdc++/4.9/include/valarray \
  ../../../../native/jni/include/opencv2/contrib/openfabmap.hpp \
  /home/zzh/android_ndk/android-ndk-r12b/android-ndk-r12b/sources/cxx-stl/gnu-libstdc++/4.9/include/set \
+ ../../../../native/jni/include/opencv2/stitching/stitcher.hpp \
+ ../../../../native/jni/include/opencv2/stitching/warpers.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/warpers.hpp \
+ ../../../../native/jni/include/opencv2/core/gpumat.hpp \
+ ../../../../native/jni/include/opencv2/core/cuda_devptrs.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/warpers_inl.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/warpers.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/matchers.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/motion_estimators.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/matchers.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/util.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/util_inl.hpp \
+ /home/zzh/android_ndk/android-ndk-r12b/android-ndk-r12b/sources/cxx-stl/gnu-libstdc++/4.9/include/queue \
+ ../../../../native/jni/include/opencv2/stitching/detail/camera.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/exposure_compensate.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/seam_finders.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/blenders.hpp \
+ ../../../../native/jni/include/opencv2/stitching/detail/camera.hpp \
  /home/zzh/android5.0/lol1/meizu/Client/TestOpenCV/app/src/main/jni/Log.h
 
 ../../../../native/jni/include/opencv2/opencv.hpp:
@@ -124,5 +142,41 @@
 ../../../../native/jni/include/opencv2/contrib/openfabmap.hpp:
 
 /home/zzh/android_ndk/android-ndk-r12b/android-ndk-r12b/sources/cxx-stl/gnu-libstdc++/4.9/include/set:
+
+../../../../native/jni/include/opencv2/stitching/stitcher.hpp:
+
+../../../../native/jni/include/opencv2/stitching/warpers.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/warpers.hpp:
+
+../../../../native/jni/include/opencv2/core/gpumat.hpp:
+
+../../../../native/jni/include/opencv2/core/cuda_devptrs.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/warpers_inl.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/warpers.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/matchers.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/motion_estimators.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/matchers.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/util.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/util_inl.hpp:
+
+/home/zzh/android_ndk/android-ndk-r12b/android-ndk-r12b/sources/cxx-stl/gnu-libstdc++/4.9/include/queue:
+
+../../../../native/jni/include/opencv2/stitching/detail/camera.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/exposure_compensate.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/seam_finders.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/blenders.hpp:
+
+../../../../native/jni/include/opencv2/stitching/detail/camera.hpp:
 
 /home/zzh/android5.0/lol1/meizu/Client/TestOpenCV/app/src/main/jni/Log.h:

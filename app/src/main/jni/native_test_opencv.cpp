@@ -7,6 +7,7 @@
 #include <android/bitmap.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/stitching/stitcher.hpp>
 
 #include "Log.h"
 
@@ -19,6 +20,63 @@ int nativeMediumBlur(Mat& img, Mat& gray, int size);
 int nativeBlur(Mat& img, Mat& gray, Size_<int>& size);
 
 int nativeGaussianBlur(Mat& img, Mat& gray, Size_<int>& size);
+
+
+extern "C"
+JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher(
+        JNIEnv *env, jclass obj, jobject img1, jobject img2, jobject finalImg) {
+
+    //-------------------111-------------------
+    AndroidBitmapInfo bmpInfo1;
+    int result = AndroidBitmap_getInfo(env, img1, &bmpInfo1);
+    if (ANDROID_BITMAP_RESULT_SUCCESS != result) {
+        return 0;
+    }
+    if (bmpInfo1.width <= 0 || bmpInfo1.height <= 0 || ANDROID_BITMAP_FORMAT_RGBA_8888 != bmpInfo1.format) {
+        return 0;
+    }
+
+    int width = bmpInfo1.width;
+    int height = bmpInfo1.height;
+
+    void* argb1 = 0;
+    AndroidBitmap_lockPixels(env, img1, &argb1);
+    Mat stitcherImg1(height, width, CV_8UC4, argb1);
+
+    //-------------------222---------------------
+    AndroidBitmapInfo bmpInfo2;
+    result = AndroidBitmap_getInfo(env, img2, &bmpInfo2);
+    if (ANDROID_BITMAP_RESULT_SUCCESS != result) {
+        return 0;
+    }
+    if (bmpInfo2.width <= 0 || bmpInfo2.height <= 0 || ANDROID_BITMAP_FORMAT_RGBA_8888 != bmpInfo2.format) {
+        return 0;
+    }
+
+    width = bmpInfo2.width;
+    height = bmpInfo2.height;
+
+    void* argb2 = 0;
+    AndroidBitmap_lockPixels(env, img2, &argb2);
+    Mat stitcherImg2(height, width, CV_8UC4, argb2);
+
+
+    vector<Mat> imgs;
+    imgs.push_back(stitcherImg1);
+    imgs.push_back(stitcherImg2);
+
+    //------------------------------------------
+    Mat pano;
+    Stitcher stitcher = Stitcher::createDefault(false);
+    Stitcher::Status status = stitcher.stitch(imgs, pano);
+    if (status != Stitcher::OK)
+    {
+        LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher Can't stitch images, error code = %d", status);
+        return -1;
+    }
+
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher success final img size=%dx%d", pano.cols, pano.rows);
+}
 
 extern "C"
 JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeFindContours(

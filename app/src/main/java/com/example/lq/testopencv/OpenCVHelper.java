@@ -32,4 +32,6 @@ public class OpenCVHelper {
     public static native int nativeProcessImage(Bitmap bitmap, Bitmap dstBmp, int type);
 
     public static native int nativeFindContours(Bitmap bitmap, int mode, int method, ArrayList<ArrayList<Point>> contours);
+
+    public static native int nativeStitcher(Bitmap bmp1, Bitmap bmp3, Bitmap finalBmp);
 }
