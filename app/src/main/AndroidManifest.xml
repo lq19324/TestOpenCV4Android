@@ -13,11 +13,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".BlurActivity" android:label="模糊"/>
+        <activity android:name=".GrayActivity" android:label="灰度"/>
+        <activity android:name=".FindContoursActivity" android:label="找边界"/>
+        <activity android:name=".ThresholdActivity" android:label="阀值"/>
+        <activity android:name=".AdaptiveThresholdActivity" android:label="自适应阀值"/>
+        <activity android:name=".StitcherActivity" android:label="拼接"/>
 
-        <activity android:name=".BlurActivity"/>
-        <activity android:name=".GrayActivity"/>
-        <activity android:name=".FindContoursActivity"/>
-        <activity android:name=".StitcherActivity"/>
     </application>
 
 </manifest>

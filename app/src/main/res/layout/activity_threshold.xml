@@ -6,18 +6,17 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/but_mode"
+        android:id="@+id/but_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="mode=CV_RETR_CCOMP"
+        android:text="type=CV_THRESH_BINARY"
         android:onClick="onButtonClick"/>
 
-    <Button
-        android:id="@+id/but_method"
-        android:layout_width="wrap_content"
+    <SeekBar
+        android:id="@+id/sb_threshold"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="method=CV_CHAIN_APPROX_NONE"
-        android:onClick="onButtonClick"/>
+        android:max="255"/>
 
     <Button
         android:id="@+id/but_apply"

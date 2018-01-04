@@ -1,5 +1,5 @@
 //
-// Created by liuqiang on 17-11-23.
+// Created by lq on 17-11-23.
 //
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +21,8 @@ int nativeBlur(Mat& img, Mat& gray, Size_<int>& size);
 
 int nativeGaussianBlur(Mat& img, Mat& gray, Size_<int>& size);
 
+int nativeBilateralFilter(Mat& rSrcMat, Mat& rDstMat, int value);
+
 
 extern "C"
 JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher(
@@ -32,14 +34,15 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeStitche
     if (ANDROID_BITMAP_RESULT_SUCCESS != result) {
         return 0;
     }
-    if (bmpInfo1.width <= 0 || bmpInfo1.height <= 0 || ANDROID_BITMAP_FORMAT_RGBA_8888 != bmpInfo1.format) {
+    if (bmpInfo1.width <= 0 || bmpInfo1.height <= 0 ||
+        ANDROID_BITMAP_FORMAT_RGBA_8888 != bmpInfo1.format) {
         return 0;
     }
 
     int width = bmpInfo1.width;
     int height = bmpInfo1.height;
 
-    void* argb1 = 0;
+    void *argb1 = 0;
     AndroidBitmap_lockPixels(env, img1, &argb1);
     Mat stitcherImg1(height, width, CV_8UC4, argb1);
 
@@ -49,19 +52,20 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeStitche
     if (ANDROID_BITMAP_RESULT_SUCCESS != result) {
         return 0;
     }
-    if (bmpInfo2.width <= 0 || bmpInfo2.height <= 0 || ANDROID_BITMAP_FORMAT_RGBA_8888 != bmpInfo2.format) {
+    if (bmpInfo2.width <= 0 || bmpInfo2.height <= 0 ||
+        ANDROID_BITMAP_FORMAT_RGBA_8888 != bmpInfo2.format) {
         return 0;
     }
 
     width = bmpInfo2.width;
     height = bmpInfo2.height;
 
-    void* argb2 = 0;
+    void *argb2 = 0;
     AndroidBitmap_lockPixels(env, img2, &argb2);
     Mat stitcherImg2(height, width, CV_8UC4, argb2);
 
 
-    vector<Mat> imgs;
+    vector <Mat> imgs;
     imgs.push_back(stitcherImg1);
     imgs.push_back(stitcherImg2);
 
@@ -69,13 +73,79 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeStitche
     Mat pano;
     Stitcher stitcher = Stitcher::createDefault(false);
     Stitcher::Status status = stitcher.stitch(imgs, pano);
-    if (status != Stitcher::OK)
-    {
-        LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher Can't stitch images, error code = %d", status);
+    if (status != Stitcher::OK) {
+        LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher Can't stitch images, error code = %d",
+            status);
         return -1;
     }
 
-    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher success final img size=%dx%d", pano.cols, pano.rows);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeStitcher success final img size=%dx%d",
+        pano.cols, pano.rows);
+}
+
+
+extern "C"
+JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeAdaptiveThreshold(
+        JNIEnv *env, jclass obj, jobject bitmap, jint method, jint type, jint blockSize, jint param) {
+
+    AndroidBitmapInfo dstBitmapInfo;
+    int result = AndroidBitmap_getInfo(env, bitmap, &dstBitmapInfo);
+    if (ANDROID_BITMAP_RESULT_SUCCESS != result) {
+        return 0;
+    }
+    if (dstBitmapInfo.width <= 0 || dstBitmapInfo.height <= 0 || ANDROID_BITMAP_FORMAT_RGBA_8888 != dstBitmapInfo.format) {
+        return 0;
+    }
+
+    int width = dstBitmapInfo.width;
+    int height = dstBitmapInfo.height;
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeAdaptiveThreshold bitmap size=%dx%d", width, height);
+
+    void* dstRgba = 0;
+    AndroidBitmap_lockPixels(env, bitmap, &dstRgba);
+    Mat dstMat(height, width, CV_8UC4, dstRgba);
+
+    int retVal = 0;
+    Mat gray;
+    cvtColor(dstMat, gray, CV_RGBA2GRAY);
+    adaptiveThreshold(gray, gray, 255, method, type, blockSize, param);
+    cvtColor(gray, dstMat, COLOR_GRAY2RGBA);
+
+    AndroidBitmap_unlockPixels(env, bitmap);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeAdaptiveThreshold end");
+    return retVal;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeThreshold(
+        JNIEnv *env, jclass obj, jobject bitmap, jint type, jint thre) {
+
+    AndroidBitmapInfo dstBitmapInfo;
+    int result = AndroidBitmap_getInfo(env, bitmap, &dstBitmapInfo);
+    if (ANDROID_BITMAP_RESULT_SUCCESS != result) {
+        return 0;
+    }
+    if (dstBitmapInfo.width <= 0 || dstBitmapInfo.height <= 0 || ANDROID_BITMAP_FORMAT_RGBA_8888 != dstBitmapInfo.format) {
+        return 0;
+    }
+
+    int width = dstBitmapInfo.width;
+    int height = dstBitmapInfo.height;
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeThreshold bitmap size=%dx%d", width, height);
+
+    void* dstRgba = 0;
+    AndroidBitmap_lockPixels(env, bitmap, &dstRgba);
+    Mat dstMat(height, width, CV_8UC4, dstRgba);
+
+    int retVal = 0;
+    Mat gray;
+    cvtColor(dstMat, gray, CV_RGBA2GRAY);
+    threshold(gray, gray, thre, 255, type);
+    cvtColor(gray, dstMat, COLOR_GRAY2RGBA);
+
+    AndroidBitmap_unlockPixels(env, bitmap);
+    LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeThreshold end");
+    return retVal;
 }
 
 extern "C"
@@ -205,8 +275,8 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeProcess
     } else if (type == 4) {// gaussian blur
         Size_<int> size(level, level);
         retVal = nativeGaussianBlur(rSrcMat, rDstMat, size);
-    } else if (type == 5) {// find contours
-
+    } else if (type == 5) {// bilateral blur
+        retVal = nativeBilateralFilter(rSrcMat, rDstMat, level);
     }
 
     LOG("Java_com_example_lq_testopencv_OpenCVHelper_nativeProcessImage retVal=%d", retVal);
@@ -221,14 +291,9 @@ JNIEXPORT jint JNICALL Java_com_example_lq_testopencv_OpenCVHelper_nativeProcess
 
 
 int nativeGray(Mat& rSrcMat, Mat& rDstMat) {
-    cvtColor(rSrcMat, rDstMat, CV_RGBA2GRAY); // Assuming RGBA input
-    LOG("nativeGray() dstRgba=%d", rDstMat.data);
-    if(rDstMat.type() == CV_8UC1) {
-        Mat tmp(rDstMat.size(), rSrcMat.type(), rDstMat.data);
-        LOG("nativeGray() CV_8UC1 -> RGBA_8888");
-        cvtColor(rDstMat, tmp, COLOR_GRAY2RGBA);
-    }
-    LOG("nativeGray() rDstMat type=%d", rDstMat.type());
+    Mat gray;
+    cvtColor(rSrcMat, gray, CV_RGBA2GRAY); // Assuming RGBA input
+    cvtColor(gray, rDstMat, COLOR_GRAY2RGBA);
 
     if (rDstMat.rows == rSrcMat.rows && rDstMat.cols == rSrcMat.cols) {
         return (1);
@@ -236,21 +301,56 @@ int nativeGray(Mat& rSrcMat, Mat& rDstMat) {
     return(0);
 }
 
+/*中值平滑
+ * 卷积内中间值
+ * */
 int nativeMediumBlur(Mat& rSrcMat, Mat& rDstMat, int ksize) {
     medianBlur(rSrcMat, rDstMat, ksize);
     LOG("nativeMediumBlur() rDstMat type=%d", rDstMat.type());
     return (1);
 }
 
+/*均值平滑
+ * 卷积内求平均
+ * */
 int nativeBlur(Mat& rSrcMat, Mat& rDstMat, Size_<int>& ksize) {
     blur(rSrcMat, rDstMat, ksize);
     LOG("nativeBlur() rDstMat type=%d", rDstMat.type());
     return 1;
 }
-
+/*
+ * 高斯平滑
+ * 滤波算法中，目标点上的像素值通常是由其所在位置上的周围的一个小局部邻居像素的值所决定。
+ * 在2D高斯滤波中的具体实现就是对周围的一定范围内的像素值分别赋以不同的高斯权重值，并在加权平均后得到当前点的最终结果。
+ * 而这里的高斯权重因子是利用两个像素之间的空间距离（在图像中为2D）关系来生成。
+ * 通过高斯分布的曲线可以发现，离目标像素越近的点对最终结果的贡献越大，反之则越小。
+ * */
 int nativeGaussianBlur(Mat& rSrcMat, Mat& rDstMat, Size_<int>& ksize) {
-    GaussianBlur(rSrcMat, rDstMat, ksize, 3);
+    GaussianBlur(rSrcMat, rDstMat, ksize, 3, 3);
+    Mat result;
+    GaussianBlur(rDstMat, result, ksize, 3, 3);
+    result.copyTo(rDstMat);
+    GaussianBlur(rDstMat, result, ksize, 3, 3);
+    result.copyTo(rDstMat);
     LOG("nativeGaussianBlur() rDstMat type=%d", rDstMat.type());
+    return 1;
+}
+
+/*
+ * 双边平滑
+ * 高斯滤波在低通滤波算法中有不错的表现，但是其却有另外一个问题，那就是只考虑了像素间的空间位置上的关系，
+ * 因此滤波的结果会丢失边缘的信息。这里的边缘主要是指图像中主要的不同颜色区域（比如蓝色的天空，黑色的头发等），
+ * 而Bilateral就是在Gaussian blur中加入了另外的一个权重分部来解决这一问题。
+ * **/
+//E/cv::error(): OpenCV Error: Assertion failed ((src.type() == CV_8UC1 || src.type() == CV_8UC3) && src.type() == dst.type() && src.size() == dst.size() && src.data != dst.data) in void cv::bilateralFilter_8u(const cv::Mat&, cv::Mat&, int, double, double, int), file /build/2_4_pack-android/opencv/modules/imgproc/src/smooth.cpp, line 1925
+int nativeBilateralFilter(Mat& rSrcMat, Mat& rDstMat, int value) {
+    Mat src3Mat;
+    cvtColor(rSrcMat, src3Mat, COLOR_RGBA2RGB);
+    Mat dst3Mat;
+    cvtColor(rDstMat, dst3Mat, COLOR_RGBA2RGB);
+    bilateralFilter(src3Mat, dst3Mat, value, value, value*2);
+    cvtColor(dst3Mat, rDstMat, COLOR_RGB2RGBA);
+    LOG("nativeBilateralFilter() rDstMat type=%d", rDstMat.type());
     return 1;
 }
 

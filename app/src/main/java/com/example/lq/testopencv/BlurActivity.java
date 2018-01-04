@@ -44,7 +44,7 @@ public class BlurActivity extends Activity {
 
         AssetManager am = getAssets();
         try {
-            mSrcBitmap = BitmapFactory.decodeStream(am.open("test3.jpg"));
+            mSrcBitmap = BitmapFactory.decodeStream(am.open("test_bilateral_blur.jpg"));
             mDstBitmap = Bitmap.createBitmap(mSrcBitmap.getWidth(), mSrcBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,6 +88,10 @@ public class BlurActivity extends Activity {
             OpenCVHelper.nativeProcessImage(mSrcBitmap, mDstBitmap, value);
         } else if (viewID == R.id.but_gaussian_blur) {
             mBlurType = 4;
+            int value = (mBlurType << 8) | mBlurLevel;
+            OpenCVHelper.nativeProcessImage(mSrcBitmap, mDstBitmap, value);
+        } else if (viewID == R.id.but_bilateral_blur) {
+            mBlurType = 5;
             int value = (mBlurType << 8) | mBlurLevel;
             OpenCVHelper.nativeProcessImage(mSrcBitmap, mDstBitmap, value);
         }
